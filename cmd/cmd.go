@@ -5,7 +5,7 @@ import (
 
 	"github.com/goat-project/exporter/constants"
 	"github.com/goat-project/exporter/logger"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -26,7 +26,7 @@ var cmd = &cobra.Command{
 
 		checkRequired()
 		if viper.GetBool("debug") {
-			log.WithFields(log.Fields{"version": version}).Debug("exporter version")
+			logrus.WithFields(logrus.Fields{"version": version}).Debug("service version")
 			logFlags()
 		}
 
@@ -40,7 +40,7 @@ var cmd = &cobra.Command{
 // for commands and then corresponding flags.
 func Execute() {
 	if err := cmd.Execute(); err != nil {
-		log.WithFields(log.Fields{"error": err}).Fatal("fatal error execute")
+		logrus.WithFields(logrus.Fields{"error": err}).Fatal("fatal error execute")
 	}
 }
 
@@ -76,14 +76,14 @@ func initConfig() {
 	// find and read the config file
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error config file")
+		logrus.WithFields(logrus.Fields{"error": err}).Error("error config file")
 	}
 }
 
 func checkRequired() {
 	for _, req := range flags[:len(flags)-1] { // required flags without the last one (log-path)
 		if viper.GetString(req) == "" {
-			log.WithFields(log.Fields{"flag": req}).Fatal("required flag not set")
+			logrus.WithFields(logrus.Fields{"flag": req}).Fatal("required flag not set")
 		}
 	}
 }
@@ -92,13 +92,13 @@ func bindFlags(command cobra.Command) {
 	for _, flag := range flags {
 		err := viper.BindPFlag(flag, command.PersistentFlags().Lookup(flag))
 		if err != nil {
-			log.WithFields(log.Fields{"error": err, "flag": flag}).Panic("unable to initialize flag")
+			logrus.WithFields(logrus.Fields{"error": err, "flag": flag}).Panic("unable to initialize flag")
 		}
 	}
 }
 
 func logFlags() {
 	for _, flag := range flags {
-		log.WithFields(log.Fields{"flag": flag, "value": viper.Get(flag)}).Debug("flag initialized")
+		logrus.WithFields(logrus.Fields{"flag": flag, "value": viper.Get(flag)}).Debug("flag initialized")
 	}
 }
