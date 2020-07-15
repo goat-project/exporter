@@ -41,16 +41,13 @@ func (w Watcher) Watch() {
 					continue
 				}
 
-				switch mode := fi.Mode(); {
-				case mode.IsDir(): // add new directory to Watcher
+				if fi.Mode().IsDir() { // add new directory to Watcher
 					err = w.Watcher.Add(event.Name)
 					if err != nil {
 						logrus.WithField("error", err).Error("error add directory to watcher")
 						continue
 					}
 					logrus.WithField("dir", event.Name).Debug("dir added to watcher")
-				case mode.IsRegular():
-					//w.EventChan <- event // add event to channel when file is created
 				}
 			}
 
