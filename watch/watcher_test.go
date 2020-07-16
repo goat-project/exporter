@@ -122,28 +122,6 @@ var _ = Describe("Watcher tests", func() {
 			}, 0.2)
 		})
 
-		Context("when new file is created", func() {
-			BeforeEach(func() {
-				Expect(os.MkdirAll(dirPath, 0700)).NotTo(HaveOccurred())
-			})
-
-			It("should not return an error", func(done Done) {
-				Expect(watcher.AddRootWithSubDirs(dirPath)).NotTo(HaveOccurred())
-
-				go watcher.Watch()
-
-				_, err := os.Create(dirPath + "/file.txt")
-				Expect(err).NotTo(HaveOccurred())
-
-				event := <-watcher.EventChan
-
-				Expect(event.Op).To(Equal(fsnotify.Create))
-				Expect(event.Name).To(Equal(dirPath + "/file.txt"))
-
-				close(done)
-			}, 0.2)
-		})
-
 		Context("when file is modified", func() {
 			BeforeEach(func() {
 				Expect(os.MkdirAll(dirPath, 0700)).NotTo(HaveOccurred())
@@ -157,14 +135,10 @@ var _ = Describe("Watcher tests", func() {
 				file, err := os.Create(dirPath + "/file.txt")
 				Expect(err).NotTo(HaveOccurred())
 
-				event := <-watcher.EventChan
-				Expect(event.Op).To(Equal(fsnotify.Create))
-				Expect(event.Name).To(Equal(dirPath + "/file.txt"))
-
 				_, err = file.Write([]byte("Hello world!"))
 				Expect(err).NotTo(HaveOccurred())
 
-				event = <-watcher.EventChan
+				event := <-watcher.EventChan
 				Expect(event.Op).To(Equal(fsnotify.Write))
 				Expect(event.Name).To(Equal(dirPath + "/file.txt"))
 
