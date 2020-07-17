@@ -1,0 +1,15 @@
+{
+ "Ips": [
+  {
+   "SiteName": "goat-network-site-name",
+   "CloudComputeService": null,
+   "CloudType": "goat-network-cloud-type",
+   "LocalUser": "16",
+   "LocalGroup": "7",
+   "GlobalUserName": "qmxnxtgapwk",
+   "FQAN": "/Group7/Role=NULL/Capability=NULL",
+   "IPVersion": 4,
+   "IPCount": 5
+  }
+ ]
+}

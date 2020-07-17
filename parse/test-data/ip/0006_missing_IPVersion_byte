@@ -1,0 +1,15 @@
+{
+ "Ips": [
+  {
+   "MeasurementTime": 1578480993,
+   "SiteName": "goat-network-site-name",
+   "CloudComputeService": null,
+   "CloudType": "goat-network-cloud-type",
+   "LocalUser": "16",
+   "LocalGroup": "7",
+   "GlobalUserName": "qmxnxtgapwk",
+   "FQAN": "/Group7/Role=NULL/Capability=NULL",
+   "IPCount": 5
+  }
+ ]
+}
