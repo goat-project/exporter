@@ -1,0 +1,31 @@
+APEL-cloud-message: v0.4
+
+VMUUID: fe1e6de8-149b-472a-b815-6a79bab50df9
+SiteName: goat-vm-site-name
+CloudComputeService: NULL
+MachineName: one-57502
+LocalUserId: 18
+LocalGroupId: 1
+GlobalUserName: qzxylgfqoxpjmcsxfxv
+FQAN: /Group1/Role=NULL/Capability=NULL
+Status: ACTIVE
+StartTime: 1578317745
+EndTime: 1578327156
+SuspendDuration: -7698194
+WallDuration: 7707605
+CpuDuration: 7707605
+CpuCount: 1
+NetworkType: NULL
+NetworkInbound: 48708945
+NetworkOutbound: 12983215634
+PublicIPCount: 1
+Memory: 2048
+Disk: 13312
+StorageRecordId: NULL
+ImageId: NULL
+CloudType: goat-vm-cloud-type
+BenchmarkType: NULL
+Benchmark: NULL
+Pancake: nutella
+Pizza: ham
+%%
