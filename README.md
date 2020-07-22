@@ -1,5 +1,7 @@
 # Goat exporter
 
+[![Build Status](https://travis-ci.org/goat-project/exporter.svg?branch=master)](https://travis-ci.org/goat-project/exporter)
+
 Goat exporter exports *Storage*, *Public IP* and *Cloud Usage* records to [Prometheus](https://prometheus.io/).
 
 ![exporter](https://github.com/goat-project/exporter/blob/master/img/exporter.png)
