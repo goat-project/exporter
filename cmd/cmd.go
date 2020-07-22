@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"fmt"
+	"github.com/goat-project/exporter/service"
 
 	"github.com/goat-project/exporter/constants"
 	"github.com/goat-project/exporter/logger"
@@ -30,8 +30,7 @@ var cmd = &cobra.Command{
 			logFlags()
 		}
 
-		// TODO
-		fmt.Println("Hello exporter!")
+		service.Serve()
 	},
 }
 
