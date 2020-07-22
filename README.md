@@ -4,7 +4,7 @@
 
 Goat exporter exports *Storage*, *Public IP* and *Cloud Usage* records to [Prometheus](https://prometheus.io/).
 
-![exporter](https://github.com/goat-project/exporter/tree/master/img/exporter.png)
+![exporter](https://github.com/goat-project/exporter/blob/master/img/exporter.png)
 
 The goat exporter is [a service](https://github.com/goat-project/exporter/tree/master/service) that waits for records using a Watcher. 
 The [Watcher](https://github.com/goat-project/exporter/tree/master/watch) watches a root directory given by a configuration and its subdirectories. 
