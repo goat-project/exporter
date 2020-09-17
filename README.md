@@ -52,10 +52,18 @@ The default configuration file is in [`config/` folder](https://github.com/goat-
 The exporter configuration, named `exporter.yml`, could be also placed in `/etc/exporter/` or `$HOME/.exporter/`.
 
 ## Usage example
+- Build and run exporter:
 ```
 go build
 ./exporter
 ```
+- See metrics:
+    - run [<prometheus-endpoint>/metrics]()
+- Graphs and other visualizations:
+    - [EXPRESSION BROWSER](https://prometheus.io/docs/visualization/browser/): [<prometheus-endpoint>/graph]()
+    - [GRAFANA SUPPORT FOR PROMETHEUS](https://prometheus.io/docs/visualization/grafana/): default [:3000]()
+    - [CONSOLE TEMPLATES](https://prometheus.io/docs/visualization/consoles/)
+
 
 ## Contributing
 1. [Fork exporter](https://github.com/goat-project/exporter/fork)
