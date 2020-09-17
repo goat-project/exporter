@@ -50,6 +50,8 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"LocalUser",
+			"LocalGroup",
 		},
 	)
 
@@ -60,6 +62,8 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"LocalUser",
+			"LocalGroup",
 		},
 	)
 
@@ -70,6 +74,8 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"LocalUser",
+			"LocalGroup",
 		},
 	)
 
@@ -80,6 +86,8 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"LocalUser",
+			"LocalGroup",
 		},
 	)
 
@@ -90,6 +98,8 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"LocalUser",
+			"LocalGroup",
 		},
 	)
 
@@ -100,6 +110,8 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"LocalUser",
+			"LocalGroup",
 		},
 	)
 
@@ -110,6 +122,8 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"LocalUser",
+			"LocalGroup",
 		},
 	)
 
@@ -139,31 +153,41 @@ func (stg *StorageGauge) Export(rec record.Record) {
 	storages := rec.(record.Storages)
 
 	for _, storage := range storages.Storages {
-		labelRecordID := prometheus.Labels{
-			"RecordId": storage.RecordID,
+		label := prometheus.Labels{
+			"RecordId":   storage.RecordID,
+			"LocalUser":  "",
+			"LocalGroup": "",
+		}
+
+		if storage.LocalUser != nil {
+			label["LocalUser"] = *storage.LocalUser
+		}
+
+		if storage.LocalGroup != nil {
+			label["LocalGroup"] = *storage.LocalGroup
 		}
 
 		stg.Timestamp.With(labelForStorageTimestamp(storage)).Set(float64(time.Now().Unix()))
 
 		if storage.FileCount != nil {
-			stg.FileCount.With(labelRecordID).Set(utils.StrToF64(*storage.FileCount))
+			stg.FileCount.With(label).Set(utils.StrToF64(*storage.FileCount))
 		}
 
-		stg.ResourceCapacityUsed.With(labelRecordID).Set(float64(storage.ResourceCapacityUsed))
+		stg.ResourceCapacityUsed.With(label).Set(float64(storage.ResourceCapacityUsed))
 
 		if storage.LogicalCapacityUsed != nil {
-			stg.LogicalCapacityUsed.With(labelRecordID).Set(float64(*storage.LogicalCapacityUsed))
+			stg.LogicalCapacityUsed.With(label).Set(float64(*storage.LogicalCapacityUsed))
 		}
 
 		if storage.ResourceCapacityAllocated != nil {
-			stg.ResourceCapacityAllocated.With(labelRecordID).Set(float64(*storage.ResourceCapacityAllocated))
+			stg.ResourceCapacityAllocated.With(label).Set(float64(*storage.ResourceCapacityAllocated))
 		}
 
-		stg.CreateTime.With(labelRecordID).Set(float64(storage.CreateTime.Unix()))
+		stg.CreateTime.With(label).Set(float64(storage.CreateTime.Unix()))
 
-		stg.StartTime.With(labelRecordID).Set(float64(storage.StartTime.Unix()))
+		stg.StartTime.With(label).Set(float64(storage.StartTime.Unix()))
 
-		stg.EndTime.With(labelRecordID).Set(float64(storage.EndTime.Unix()))
+		stg.EndTime.With(label).Set(float64(storage.EndTime.Unix()))
 	}
 }
 
