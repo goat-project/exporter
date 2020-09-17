@@ -44,6 +44,8 @@ func NewIPGauge() *IPGauge {
 	},
 		[]string{
 			"LocalUser",
+			"LocalGroup",
+			"GlobalUserName",
 		},
 	)
 
@@ -54,6 +56,8 @@ func NewIPGauge() *IPGauge {
 	},
 		[]string{
 			"LocalUser",
+			"LocalGroup",
+			"GlobalUserName",
 		},
 	)
 
@@ -78,8 +82,10 @@ func (ipg *IPGauge) Export(rec record.Record) {
 	ips := rec.(record.IPs)
 
 	for _, ip := range ips.Ips {
-		labelLocalUser := prometheus.Labels{
-			"LocalUser": ip.LocalUser,
+		label := prometheus.Labels{
+			"LocalUser":      ip.LocalUser,
+			"LocalGroup":     ip.LocalGroup,
+			"GlobalUserName": ip.GlobalUserName,
 		}
 
 		labelTimestamp := prometheus.Labels{
@@ -99,8 +105,8 @@ func (ipg *IPGauge) Export(rec record.Record) {
 
 		ipg.Timestamp.With(labelTimestamp).Set(float64(time.Now().Unix()))
 
-		ipg.MeasurementTime.With(labelLocalUser).Set(float64(ip.MeasurementTime))
+		ipg.MeasurementTime.With(label).Set(float64(ip.MeasurementTime))
 
-		ipg.IPCount.With(labelLocalUser).Set(float64(ip.IPCount))
+		ipg.IPCount.With(label).Set(float64(ip.IPCount))
 	}
 }
