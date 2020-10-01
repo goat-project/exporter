@@ -43,6 +43,7 @@ func NewIPGauge() *IPGauge {
 		Help:      "represents time when the measurements were recorded.",
 	},
 		[]string{
+			"SiteName",
 			"LocalUser",
 			"LocalGroup",
 			"GlobalUserName",
@@ -55,6 +56,7 @@ func NewIPGauge() *IPGauge {
 		Help:      "represents the number of IPs owned by a given user.",
 	},
 		[]string{
+			"SiteName",
 			"LocalUser",
 			"LocalGroup",
 			"GlobalUserName",
@@ -83,6 +85,7 @@ func (ipg *IPGauge) Export(rec record.Record) {
 
 	for _, ip := range ips.Ips {
 		label := prometheus.Labels{
+			"SiteName":       ip.SiteName,
 			"LocalUser":      ip.LocalUser,
 			"LocalGroup":     ip.LocalGroup,
 			"GlobalUserName": ip.GlobalUserName,
