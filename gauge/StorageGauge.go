@@ -14,13 +14,13 @@ import (
 // StorageGauge represents storage gauges exported to Prometheus.
 type StorageGauge struct {
 	Timestamp                 *prometheus.GaugeVec
+	CreateTime                *prometheus.GaugeVec
 	FileCount                 *prometheus.GaugeVec
+	StartTime                 *prometheus.GaugeVec
+	EndTime                   *prometheus.GaugeVec
 	ResourceCapacityUsed      *prometheus.GaugeVec
 	LogicalCapacityUsed       *prometheus.GaugeVec
 	ResourceCapacityAllocated *prometheus.GaugeVec
-	CreateTime                *prometheus.GaugeVec
-	StartTime                 *prometheus.GaugeVec
-	EndTime                   *prometheus.GaugeVec
 }
 
 // NewStorageGauge creates storage gauge.
@@ -34,12 +34,18 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
-			"LocalUser",
-			"LocalGroup",
 			"StorageSystem",
+			"Site",
 			"StorageShare",
 			"StorageMedia",
+			"StorageClass",
+			"DirectoryPath",
+			"LocalUser",
+			"LocalGroup",
+			"UserIdentity",
 			"Group",
+			"GroupAttribute",
+			"GroupAttributeType",
 		},
 	)
 
@@ -50,8 +56,10 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"Site",
 			"LocalUser",
 			"LocalGroup",
+			"UserIdentity",
 		},
 	)
 
@@ -62,8 +70,10 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"Site",
 			"LocalUser",
 			"LocalGroup",
+			"UserIdentity",
 		},
 	)
 
@@ -74,8 +84,10 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"Site",
 			"LocalUser",
 			"LocalGroup",
+			"UserIdentity",
 		},
 	)
 
@@ -86,8 +98,10 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"Site",
 			"LocalUser",
 			"LocalGroup",
+			"UserIdentity",
 		},
 	)
 
@@ -98,8 +112,10 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"Site",
 			"LocalUser",
 			"LocalGroup",
+			"UserIdentity",
 		},
 	)
 
@@ -110,8 +126,10 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"Site",
 			"LocalUser",
 			"LocalGroup",
+			"UserIdentity",
 		},
 	)
 
@@ -122,8 +140,10 @@ func NewStorageGauge() *StorageGauge {
 	},
 		[]string{
 			"RecordId",
+			"Site",
 			"LocalUser",
 			"LocalGroup",
+			"UserIdentity",
 		},
 	)
 
@@ -134,13 +154,13 @@ func NewStorageGauge() *StorageGauge {
 func (stg *StorageGauge) Register() {
 	gauges := []prometheus.Collector{
 		stg.Timestamp,
+		stg.CreateTime,
 		stg.FileCount,
+		stg.StartTime,
+		stg.EndTime,
 		stg.ResourceCapacityUsed,
 		stg.LogicalCapacityUsed,
 		stg.ResourceCapacityAllocated,
-		stg.CreateTime,
-		stg.StartTime,
-		stg.EndTime,
 	}
 
 	prometheus.MustRegister(gauges...)
@@ -154,9 +174,15 @@ func (stg *StorageGauge) Export(rec record.Record) {
 
 	for _, storage := range storages.Storages {
 		label := prometheus.Labels{
-			"RecordId":   storage.RecordID,
-			"LocalUser":  "",
-			"LocalGroup": "",
+			"RecordId":     storage.RecordID,
+			"Site":         "",
+			"LocalUser":    "",
+			"LocalGroup":   "",
+			"UserIdentity": "",
+		}
+
+		if storage.Site != nil {
+			label["Site"] = *storage.Site
 		}
 
 		if storage.LocalUser != nil {
@@ -167,11 +193,21 @@ func (stg *StorageGauge) Export(rec record.Record) {
 			label["LocalGroup"] = *storage.LocalGroup
 		}
 
+		if storage.UserIdentity != nil {
+			label["UserIdentity"] = *storage.UserIdentity
+		}
+
 		stg.Timestamp.With(labelForStorageTimestamp(storage)).Set(float64(time.Now().Unix()))
+
+		stg.CreateTime.With(label).Set(float64(storage.CreateTime.Unix()))
 
 		if storage.FileCount != nil {
 			stg.FileCount.With(label).Set(utils.StrToF64(*storage.FileCount))
 		}
+
+		stg.StartTime.With(label).Set(float64(storage.StartTime.Unix()))
+
+		stg.EndTime.With(label).Set(float64(storage.EndTime.Unix()))
 
 		stg.ResourceCapacityUsed.With(label).Set(float64(storage.ResourceCapacityUsed))
 
@@ -183,31 +219,28 @@ func (stg *StorageGauge) Export(rec record.Record) {
 			stg.ResourceCapacityAllocated.With(label).Set(float64(*storage.ResourceCapacityAllocated))
 		}
 
-		stg.CreateTime.With(label).Set(float64(storage.CreateTime.Unix()))
-
-		stg.StartTime.With(label).Set(float64(storage.StartTime.Unix()))
-
-		stg.EndTime.With(label).Set(float64(storage.EndTime.Unix()))
 	}
 }
 
 func labelForStorageTimestamp(storage record.Storage) prometheus.Labels {
 	labels := prometheus.Labels{
-		"RecordId":      storage.RecordID,
-		"StorageSystem": storage.StorageSystem,
-		"LocalUser":     "",
-		"LocalGroup":    "",
-		"StorageShare":  "",
-		"StorageMedia":  "",
-		"Group":         "",
+		"RecordId":           storage.RecordID,
+		"StorageSystem":      storage.StorageSystem,
+		"Site":               "",
+		"StorageShare":       "",
+		"StorageMedia":       "",
+		"StorageClass":       "",
+		"DirectoryPath":      "",
+		"LocalUser":          "",
+		"LocalGroup":         "",
+		"UserIdentity":       "",
+		"Group":              "",
+		"GroupAttribute":     "",
+		"GroupAttributeType": "",
 	}
 
-	if storage.LocalUser != nil {
-		labels["LocalUser"] = *storage.LocalUser
-	}
-
-	if storage.LocalGroup != nil {
-		labels["LocalGroup"] = *storage.LocalGroup
+	if storage.Site != nil {
+		labels["Site"] = *storage.Site
 	}
 
 	if storage.StorageShare != nil {
@@ -218,8 +251,36 @@ func labelForStorageTimestamp(storage record.Storage) prometheus.Labels {
 		labels["StorageMedia"] = *storage.StorageMedia
 	}
 
+	if storage.StorageClass != nil {
+		labels["StorageClass"] = *storage.StorageClass
+	}
+
+	if storage.DirectoryPath != nil {
+		labels["DirectoryPath"] = *storage.DirectoryPath
+	}
+
+	if storage.LocalUser != nil {
+		labels["LocalUser"] = *storage.LocalUser
+	}
+
+	if storage.LocalGroup != nil {
+		labels["LocalGroup"] = *storage.LocalGroup
+	}
+
+	if storage.UserIdentity != nil {
+		labels["UserIdentity"] = *storage.UserIdentity
+	}
+
 	if storage.Group != nil {
 		labels["Group"] = *storage.Group
+	}
+
+	if storage.GroupAttribute != nil {
+		labels["GroupAttribute"] = *storage.GroupAttribute
+	}
+
+	if storage.GroupAttributeType != nil {
+		labels["GroupAttributeType"] = *storage.GroupAttributeType
 	}
 
 	return labels
