@@ -62,6 +62,7 @@ func NewVMGauge() *VMGauge {
 	},
 		[]string{
 			"VMUUID",
+			"SiteName",
 			"LocalUserID",
 			"LocalGroupID",
 			"GlobalUserName",
@@ -75,6 +76,7 @@ func NewVMGauge() *VMGauge {
 	},
 		[]string{
 			"VMUUID",
+			"SiteName",
 			"LocalUserID",
 			"LocalGroupID",
 			"GlobalUserName",
@@ -89,6 +91,7 @@ func NewVMGauge() *VMGauge {
 	},
 		[]string{
 			"VMUUID",
+			"SiteName",
 			"LocalUserID",
 			"LocalGroupID",
 			"GlobalUserName",
@@ -102,6 +105,7 @@ func NewVMGauge() *VMGauge {
 	},
 		[]string{
 			"VMUUID",
+			"SiteName",
 			"LocalUserID",
 			"LocalGroupID",
 			"GlobalUserName",
@@ -115,6 +119,7 @@ func NewVMGauge() *VMGauge {
 	},
 		[]string{
 			"VMUUID",
+			"SiteName",
 			"LocalUserID",
 			"LocalGroupID",
 			"GlobalUserName",
@@ -128,6 +133,7 @@ func NewVMGauge() *VMGauge {
 	},
 		[]string{
 			"VMUUID",
+			"SiteName",
 			"LocalUserID",
 			"LocalGroupID",
 			"GlobalUserName",
@@ -141,10 +147,11 @@ func NewVMGauge() *VMGauge {
 	},
 		[]string{
 			"VMUUID",
-			"NetworkType",
+			"SiteName",
 			"LocalUserID",
 			"LocalGroupID",
 			"GlobalUserName",
+			"NetworkType",
 		},
 	)
 
@@ -155,10 +162,11 @@ func NewVMGauge() *VMGauge {
 	},
 		[]string{
 			"VMUUID",
-			"NetworkType",
+			"SiteName",
 			"LocalUserID",
 			"LocalGroupID",
 			"GlobalUserName",
+			"NetworkType",
 		},
 	)
 
@@ -169,6 +177,7 @@ func NewVMGauge() *VMGauge {
 	},
 		[]string{
 			"VMUUID",
+			"SiteName",
 			"LocalUserID",
 			"LocalGroupID",
 			"GlobalUserName",
@@ -182,6 +191,7 @@ func NewVMGauge() *VMGauge {
 	},
 		[]string{
 			"VMUUID",
+			"SiteName",
 			"LocalUserID",
 			"LocalGroupID",
 			"GlobalUserName",
@@ -195,6 +205,7 @@ func NewVMGauge() *VMGauge {
 	},
 		[]string{
 			"VMUUID",
+			"SiteName",
 			"LocalUserID",
 			"LocalGroupID",
 			"GlobalUserName",
@@ -233,13 +244,10 @@ func (vmg *VMGauge) Export(rec record.Record) {
 	for _, vm := range vms.VMs {
 		vmg.Timestamp.With(labelForVMTimestamp(vm)).Set(float64(time.Now().Unix()))
 
-		labelNework := prometheus.Labels{
-			"VMUUID":      vm.VMUUID,
-			"NetworkType": "",
-		}
-
+		labelNetwork := labelForVM(vm)
+		labelNetwork["NetworkType"] = ""
 		if vm.NetworkType != nil {
-			labelNework["NetworkType"] = *vm.NetworkType
+			labelNetwork["NetworkType"] = *vm.NetworkType
 		}
 
 		if vm.StartTime != nil {
@@ -265,11 +273,11 @@ func (vmg *VMGauge) Export(rec record.Record) {
 		vmg.CPUCount.With(labelForVM(vm)).Set(float64(vm.CPUCount))
 
 		if vm.NetworkInbound != nil {
-			vmg.NetworkInbound.With(labelNework).Set(float64(*vm.NetworkInbound))
+			vmg.NetworkInbound.With(labelNetwork).Set(float64(*vm.NetworkInbound))
 		}
 
 		if vm.NetworkOutbound != nil {
-			vmg.NetworkOutbound.With(labelNework).Set(float64(*vm.NetworkOutbound))
+			vmg.NetworkOutbound.With(labelNetwork).Set(float64(*vm.NetworkOutbound))
 		}
 
 		if vm.PublicIPCount != nil {
@@ -354,6 +362,7 @@ func labelForVMTimestamp(vm record.VM) prometheus.Labels {
 func labelForVM(vm record.VM) prometheus.Labels {
 	labels := prometheus.Labels{
 		"VMUUID":         vm.VMUUID,
+		"SiteName":       vm.SiteName,
 		"LocalUserID":    "",
 		"LocalGroupID":   "",
 		"GlobalUserName": "",
